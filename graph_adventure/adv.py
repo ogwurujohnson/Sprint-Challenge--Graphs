@@ -118,6 +118,44 @@ while unexplored_rooms:
         if len(list(exploration_map)) == 500 and '?' not in exploration_map[player.currentRoom.id].values():
             break
 
+    else:
+        # If all of the unexplored exits have been discovered in the current room...
+        # Execute a BFS to find the shortest path to an unexplored room
+
+        starting_room = player.currentRoom.id
+        q = Queue()
+
+        for available_exit, room_id in exploration_map[starting_room].items():
+            # Enqueue a path to the available exits and the rooms leading from them
+            q.enqueue([[available_exit, room_id]])
+
+        # While the queue is not empty...
+        while q.size() > 0:
+            # Dequeue the first path
+            path = q.dequeue()
+            # Grab the room from the path
+            room = path[-1]
+
+            # If all exits have been explored in the room we moved backwards into...
+            if '?' not in [room_id for available_exit, room_id in exploration_map[room[1]].items()]:
+                for available_exit, room_id in exploration_map[room[1]].items():
+                    # If the exit doesn't lead to the path or the current room
+                    if room_id is not starting_room and room_id not in [room_id for available_exit, room_id in path]:
+                        # Copy the path
+                        new_path = list(path)
+                        # Append the available exit and the room connected to it to the new path
+                        new_path.append([available_exit, room_id])
+                        q.enqueue(new_path)
+            else:
+                # Loop through the current room's available exits and the id's of the rooms they lead to...
+                for available_exit, room_id in path:
+                    # Move into that direction
+                    player.travel(available_exit)
+                    # Add the discovered exit to the traversal path
+                    traversalPath.append(available_exit)
+                break
+
+
 # TRAVERSAL TEST
 visited_rooms = set()
 player.currentRoom = world.startingRoom
