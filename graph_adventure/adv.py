@@ -45,6 +45,22 @@ def reverse_direction(direction):
         return 'w'
     elif direction is 'w':
         return 'e'
+
+# Keep track of all moves made in the exploration map
+exploration_map = {}
+
+# Find all possible exits
+possible_exits = player.currentRoom.getExits()
+exploration_map[player.currentRoom.id] = {i: '?' for i in possible_exits}
+
+
+# Keep track of all unexplored rooms
+unexplored_rooms = []
+
+for option in player.currentRoom.getExits():
+    # Add the option to the unexplored rooms
+    unexplored_rooms.append({(player.currentRoom.id, option)})
+
 # TRAVERSAL TEST
 visited_rooms = set()
 player.currentRoom = world.startingRoom
