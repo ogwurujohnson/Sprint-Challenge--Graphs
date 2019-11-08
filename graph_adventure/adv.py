@@ -46,6 +46,7 @@ def reverse_direction(direction):
     elif direction is 'w':
         return 'e'
 
+
 # Keep track of all moves made in the exploration map
 exploration_map = {}
 
