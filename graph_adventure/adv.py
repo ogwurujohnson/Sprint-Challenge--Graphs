@@ -36,6 +36,15 @@ traversalPath = ['n', 's']
 # Convert this to a list of n/s/e/w directions before adding it to the traversal path.
 # Continue loop until the traversal graph has 500 entries and no '?' in the adjacency dictionaries.
 
+def reverse_direction(direction):
+    if direction is 'n':
+        return 's'
+    elif direction is 's':
+        return 'n'
+    elif direction is 'e':
+        return 'w'
+    elif direction is 'w':
+        return 'e'
 # TRAVERSAL TEST
 visited_rooms = set()
 player.currentRoom = world.startingRoom
