@@ -62,6 +62,62 @@ for option in player.currentRoom.getExits():
     # Add the option to the unexplored rooms
     unexplored_rooms.append({(player.currentRoom.id, option)})
 
+while unexplored_rooms:
+    # Execute a DFS until we reach a room with no unexplored paths
+    if '?' in exploration_map[player.currentRoom.id].values():
+
+        # Create a helper function to go backwards
+        def reverse_direction(direction):
+            if direction is 'n':
+                return 's'
+            elif direction is 's':
+                return 'n'
+            elif direction is 'e':
+                return 'w'
+            elif direction is 'w':
+                return 'e'
+
+        next_move = None
+        starting_room = player.currentRoom.id
+
+        # Find an unexplored exit and move towards it
+        if 'n' in exploration_map[starting_room] and exploration_map[starting_room]['n'] == '?':
+            next_move = 'n'
+        elif 'e' in exploration_map[starting_room] and exploration_map[starting_room]['e'] == '?':
+            next_move = 'e'
+        elif 's' in exploration_map[starting_room] and exploration_map[starting_room]['s'] == '?':
+            next_move = 's'
+        elif 'w' in exploration_map[starting_room] and exploration_map[starting_room]['w'] == '?':
+            next_move = 'w'
+
+        # Remove the next room from the unexplored_rooms
+        unexplored_rooms.remove({(player.currentRoom.id, next_move)})
+        print(unexplored_rooms)
+
+        # Move on to the next room
+        player.travel(next_move)
+
+        # Add every new move to the traversalPath
+        new_room = player.currentRoom.id
+        traversalPath.append(next_move)
+
+        # If the new room is not in the exploration_map, find the possible exits
+        if new_room not in exploration_map:
+            exploration_map[new_room] = {i: '?' for i in player.currentRoom.getExits()}
+
+        # Update the exploration map
+        exploration_map[starting_room][next_move] = new_room
+        exploration_map[new_room][reverse_direction(next_move)] = starting_room
+
+        # Add all unexplored rooms to the unexplored_rooms list
+        for available_exit, room_id in exploration_map[new_room].items():
+            if room_id == '?':
+                unexplored_rooms.append({(new_room, available_exit)})
+
+        # If exploration_map has 500 entries and there are no '?' left then break out of the loop
+        if len(list(exploration_map)) == 500 and '?' not in exploration_map[player.currentRoom.id].values():
+            break
+
 # TRAVERSAL TEST
 visited_rooms = set()
 player.currentRoom = world.startingRoom
